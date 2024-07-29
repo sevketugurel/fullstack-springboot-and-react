@@ -1,0 +1,6 @@
+[submodule "orderservice"]
+	path = orderservice
+	url = https://github.com/sevketugurel/springboot-orderservice-microservice-architacture.git
+[submodule "userservice"]
+	path = userservice
+	url = https://github.com/sevketugurel/springboot-userservice-microservice-architacture.git
