@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  userservice:
+    image: userservice
+    ports:
+      - "8080:8080"
+
+  orderservice:
+    image: orderservice
+    ports:
+      - "8081:8081"
+    environment:
+      - USER_SERVICE_URL=http://userservice:8080
