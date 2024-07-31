@@ -2,13 +2,34 @@ version: '3.8'
 
 services:
   userservice:
-    image: userservice
+    build:
+      context: ./userservice
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    networks:
+      - app-network
 
   orderservice:
-    image: orderservice
+    build:
+      context: ./orderservice
+      dockerfile: Dockerfile
     ports:
       - "8081:8081"
     environment:
       - USER_SERVICE_URL=http://userservice:8080
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
