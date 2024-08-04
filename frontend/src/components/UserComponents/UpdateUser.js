@@ -13,7 +13,7 @@ const UpdateUser = ({ user, fetchUsers }) => {
   const updateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:8080/users/1`, { name, email });
+      const response = await axios.put(`http://localhost:8080/users/${user.id}`, { name, email });
       if (response.status === 200) {
         fetchUsers();
         handleClose();
