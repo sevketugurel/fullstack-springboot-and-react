@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Navbar, Container, Row, Col, Form, Button, ListGroup } from 'react-bootstrap';
+import { Navbar, Container, Row, Col, Form, Button, ListGroup, Card } from 'react-bootstrap';
 import DeleteUser from './components/UserComponents/DeleteUser';
 import UpdateUser from './components/UserComponents/UpdateUser';
 import DeleteOrder from './components/OrderComponents/DeleteOrder';
@@ -10,6 +10,7 @@ import './App.css'; // CSS dosyasını ekle
 function App() {
   const [users, setUsers] = useState([]); // Kullanıcı listesini tutar
   const [orders, setOrders] = useState([]); // Sipariş listesini tutar
+  const [nickname, setNickname] = useState(''); // Kullanıcı nickname
   const [name, setName] = useState(''); // Kullanıcı adı
   const [email, setEmail] = useState(''); // Kullanıcı email
   const [description, setDescription] = useState(''); // Sipariş açıklaması
@@ -45,8 +46,9 @@ function App() {
   const addUser = async (e) => {
     e.preventDefault(); // form gönderildiğinde sayfanın yenilenmesini önlemek
     try {
-      await axios.post('http://localhost:8080/users', { name, email });
+      await axios.post('http://localhost:8080/users', { nickname, name, email });
       fetchUsers();
+      setNickname('');
       setName('');
       setEmail('');
       alert('Kullanıcı başarıyla eklendi!');
@@ -81,6 +83,16 @@ function App() {
           <Col md={5} className="bordered-container">
             <h2>Kullanıcı Ekle</h2>
             <Form onSubmit={addUser}>
+              <Form.Group controlId="formNickname">
+                <Form.Label>Nickname</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Nickname giriniz"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                  required
+                />
+              </Form.Group>
               <Form.Group controlId="formName">
                 <Form.Label>İsim</Form.Label>
                 <Form.Control
@@ -120,7 +132,7 @@ function App() {
                 >
                   <option value="">Kullanıcı Seçin</option>
                   {users.map((user) => (
-                    <option key={user.id} value={user.id}>
+                    <option key={user.nickname} value={user.nickname}>
                       {user.name}
                     </option>
                   ))}
@@ -153,33 +165,50 @@ function App() {
           </Col>
         </Row>
 
-
         <Row style={{ marginTop: '20px' }}>
           <Col md={5} className="bordered-container">
-            <h2>Kullanıcılar</h2>
+            <h2 className="mb-4">Kullanıcılar</h2>
             <ListGroup>
               {users.map((user) => (
-                <ListGroup.Item key={user.id} className="d-flex justify-content-between align-items-center">
-                  {user.name} - {user.email}
-                  <div>
-                    <UpdateUser user={user} fetchUsers={fetchUsers} />
-                    <DeleteUser userId={user.id} fetchUsers={fetchUsers} />
-                  </div>
+                <ListGroup.Item key={user.nickname} className="p-3 mb-2">
+                  <Card>
+                    <Card.Body className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <Card.Title>{user.name}</Card.Title>
+                        <Card.Subtitle className="mb-2 text-muted">{user.nickname}</Card.Subtitle>
+                        <Card.Text>{user.email}</Card.Text>
+                      </div>
+                      <div>
+                        <UpdateUser user={user} fetchUsers={fetchUsers} nickname={user.nickname} />
+                        <DeleteUser nickname={user.nickname} fetchUsers={fetchUsers} />
+                      </div>
+                    </Card.Body>
+                  </Card>
                 </ListGroup.Item>
               ))}
             </ListGroup>
           </Col>
           <Col md={1}></Col> {/* Boşluk için boş bir kolon ekledik */}
           <Col md={5} className="bordered-container">
-            <h2>Siparişler</h2>
+            <h2 className="mb-4">Siparişler</h2>
             <ListGroup>
               {orders.map((order) => (
-                <ListGroup.Item key={order.id} className="d-flex justify-content-between align-items-center">
-                  {order.description} - {order.amount} - Kullanıcı ID: {order.userId}
-                  <div>
-                    <UpdateOrder order={order} fetchOrders={fetchOrders} />
-                    <DeleteOrder orderId={order.id} fetchOrders={fetchOrders} />
-                  </div>
+                <ListGroup.Item key={order.id} className="p-3 mb-2">
+                  <Card>
+                    <Card.Body className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <Card.Title>{order.description}</Card.Title>
+                        <Card.Text>
+                          <strong>Miktar:</strong> {order.amount}<br />
+                          <strong>Kullanıcı ID:</strong> {order.userId}
+                        </Card.Text>
+                      </div>
+                      <div>
+                        <UpdateOrder order={order} fetchOrders={fetchOrders}  />
+                        <DeleteOrder orderId={order.id} fetchOrders={fetchOrders} />
+                      </div>
+                    </Card.Body>
+                  </Card>
                 </ListGroup.Item>
               ))}
             </ListGroup>

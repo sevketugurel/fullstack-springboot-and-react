@@ -1,67 +1,65 @@
 import React, { useState } from 'react';
-import { Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
+import { Modal, Button, Form } from 'react-bootstrap';
 
 const UpdateUser = ({ user, fetchUsers }) => {
   const [show, setShow] = useState(false);
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
+  const [nickname] = useState(user.nickname);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const updateUser = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:8080/users/${user.id}`, { name, email });
+      const response = await axios.put(`http://localhost:8080/users`, { nickname,name, email });
       if (response.status === 200) {
+        alert('User updated successfully');
         fetchUsers();
         handleClose();
-        alert('Kullanıcı başarıyla güncellendi!');
-      } else {
-        console.error('Beklenmedik bir durum oluştu:', response);
-        alert('Kullanıcı güncellenirken beklenmedik bir durum oluştu.');
       }
     } catch (error) {
-      console.error('Kullanıcı güncellenirken bir hata oluştu:', error);
-      alert('Kullanıcı güncellenirken bir hata oluştu. Lütfen tekrar deneyin.');
+      console.error('Error updating user:', error);
+      alert('Error updating user');
     }
   };
 
   return (
     <>
-      <Button variant="warning" onClick={handleShow} style={{ marginLeft: '20px' }}>
-        Güncelle
+      <Button variant="warning" onClick={handleShow} className="mr-2">
+        Update
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Kullanıcıyı Güncelle</Modal.Title>
+          <Modal.Title>Update User</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={updateUser}>
+          <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formName">
-              <Form.Label>İsim</Form.Label>
+              <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="İsim giriniz"
+                placeholder="Enter name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
             </Form.Group>
-            <Form.Group controlId="formEmail" style={{ marginTop: '10px' }}>
-              <Form.Label>Email</Form.Label>
+            <Form.Group controlId="formEmail">
+              <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="Email giriniz"
+                placeholder="Enter email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </Form.Group>
-            <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
-              Güncelle
+            <Button variant="primary" type="submit">
+              Save Changes
             </Button>
           </Form>
         </Modal.Body>
