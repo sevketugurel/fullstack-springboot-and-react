@@ -175,7 +175,7 @@ function App() {
             <ListGroup>
               {orders.map((order) => (
                 <ListGroup.Item key={order.id} className="d-flex justify-content-between align-items-center">
-                  {order.description} - {order.amount} - Kullanıcı ID: {order.userId}
+                  {order.description} - {order.amount} - {order.userId}
                   <div>
                     <UpdateOrder order={order} fetchOrders={fetchOrders} />
                     <DeleteOrder orderId={order.id} fetchOrders={fetchOrders} />
